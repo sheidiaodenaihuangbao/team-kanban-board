@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团队任务看板 - 现代版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="modern-style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-tasks"></i> 团队任务看板</h1>
+                <div class="header-actions">
+                    <button id="addTaskBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 添加任务
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="搜索任务...">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="board-container">
+            <div class="board-columns">
+                <div class="column" data-status="todo">
+                    <div class="column-header todo-header">
+                        <div class="header-info">
+                            <h2><i class="fas fa-list"></i> 待办事项</h2>
+                            <span class="task-count badge todo-badge">0</span>
+                        </div>
+                        <div class="column-actions">
+                            <button class="btn-icon add-task-column" title="在此列添加任务">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tasks-container sortable-zone" id="todo-tasks"></div>
+                </div>
+
+                <div class="column" data-status="inprogress">
+                    <div class="column-header inprogress-header">
+                        <div class="header-info">
+                            <h2><i class="fas fa-sync-alt"></i> 进行中</h2>
+                            <span class="task-count badge inprogress-badge">0</span>
+                        </div>
+                        <div class="column-actions">
+                            <button class="btn-icon add-task-column" title="在此列添加任务">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tasks-container sortable-zone" id="inprogress-tasks"></div>
+                </div>
+
+                <div class="column" data-status="review">
+                    <div class="column-header review-header">
+                        <div class="header-info">
+                            <h2><i class="fas fa-eye"></i> 审核中</h2>
+                            <span class="task-count badge review-badge">0</span>
+                        </div>
+                        <div class="column-actions">
+                            <button class="btn-icon add-task-column" title="在此列添加任务">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tasks-container sortable-zone" id="review-tasks"></div>
+                </div>
+
+                <div class="column" data-status="done">
+                    <div class="column-header done-header">
+                        <div class="header-info">
+                            <h2><i class="fas fa-check-circle"></i> 已完成</h2>
+                            <span class="task-count badge done-badge">0</span>
+                        </div>
+                        <div class="column-actions">
+                            <button class="btn-icon add-task-column" title="在此列添加任务">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tasks-container sortable-zone" id="done-tasks"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 任务详情模态框 -->
+    <div id="taskModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-tasks"></i> 添加新任务</h2>
+                <button class="btn-icon modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <input type="hidden" id="taskId">
+                    <div class="form-group">
+                        <label for="taskTitle">任务标题 *</label>
+                        <input type="text" id="taskTitle" class="form-control" required placeholder="请输入任务标题">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">任务描述</label>
+                        <textarea id="taskDescription" class="form-control" rows="3" placeholder="请输入任务描述"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskAssignee">负责人</label>
+                            <select id="taskAssignee" class="form-control">
+                                <option value="">请选择负责人</option>
+                                <option value="张三">张三</option>
+                                <option value="李四">李四</option>
+                                <option value="王五">王五</option>
+                                <option value="赵六">赵六</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskPriority">优先级</label>
+                            <select id="taskPriority" class="form-control">
+                                <option value="low">🟢 低</option>
+                                <option value="medium" selected>🟡 中</option>
+                                <option value="high">🟠 高</option>
+                                <option value="urgent">🔴 紧急</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskDueDate">截止日期</label>
+                            <input type="date" id="taskDueDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskStatus">状态</label>
+                            <select id="taskStatus" class="form-control">
+                                <option value="todo">待办事项</option>
+                                <option value="inprogress">进行中</option>
+                                <option value="review">审核中</option>
+                                <option value="done">已完成</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="deleteTaskBtn" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> 删除任务
+                        </button>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn btn-secondary modal-cancel">
+                                <i class="fas fa-times"></i> 取消
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> 保存任务
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="modern-script.js"></script>
+</body>
+</html>
